@@ -1,6 +1,9 @@
-t#!/bin/python3
+#!/bin/python3
+# © abdul karim kikar 2022
+# licenseret under GNU GPL version 3 og nyere versioner.
 
 import sys,curses
+import curses.ascii as ascii
 w = curses.initscr()
 w.keypad(True)
 
@@ -15,20 +18,51 @@ def leave():
 
 cal = ""
 
+row = 0
+col = 0
+
+def helpPrompt():
+    w.clear()
+    w.refresh()
+    w.addstr("osocomp -- Abdul's tredje OSO produkt\n\n\tHvad er dette?\nDet her er abdul\'s tredje OSO produkt. Det er en kalendar program som\ntjekker ens kalendar og beregner vejret når man skal udenfor, så hvis\nman skal til en fest så beregner den vejret for når man tager til feste\nog indtil man gårer hjem. Den siger så om hvis man skal tage jakke på\neller andre tøje på.\n\n\tHvorfor er denne program tekst-baseret?\nDet er umuligt at lave en kalendar program med alt disse funktioner på\net uge når man arbejder med grafisk programmer. Også det er vigtigt\nat denne program burde virke på alle systemer, forskellige systemer\nhar forskellige \"grafisk værktøjsset\" (De programmer som gører det\nmuligt for programmer til at lave grafiske vinduer), Windows har deres\negen som kaldes for \"WinUI\", MacOS har \"UIKit\", HaikuOS har\n\"Interface Kit\", og Linux har \"xlib\" men de fleste bruger \"GTK\"\neller \"Qt\". Det er ikke umuligt at lave en grafiske program som\nvirker på alle disse systemer men det er virkelig svært og det tager\nmere end en uge.\n\n\tHvem har skrevet denne program?\nDet har Abdul Karim Kikar, jeg begyndte at skrive denne program I\nDecember 2022, Lidt tidligere før OSO ugen fordi jeg vidste at det vil\nvære lidt svær at lave 3 produkter på kun et uge og gører alt de andre\nting (Fremlæggelse, interview etc.) Også denne program er licenseret\nunder GNU GPL version 3 eller nyere versioner. Du kan få kildekoden\nved at spørge Abdul selv.\n\n")
+    w.getch()
+    main()
+
+
 def calOpenPrompt():
     try:
-        w.clear()
-        w.addstr("Specify which calendar file you want open")
-        w.addstr("\nOr press Enter for the default (cal.txt)")
+        curses.cbreak()
         w.refresh()
-        w.keypad(False)
-        while 1:
-            w.addstr("\n> ")
-            cmd = w.getstr()
-            if debug == True:
-                print(str(str(cmd) + "\n"))
-            if cmd == "quit":
-                leave()
+        w.keypad(True)
+        assembledstring = ""
+        curses.noecho()
+        while True:
+            w.clear()
+            w.addstr("Specify which calendar file you want open")
+            w.addstr("\nOr press Enter for the default (cal.txt)")
+            w.addstr("\nOr type \"quit\" to quit!")
+            w.addstr("\n> " + assembledstring)
+            w.refresh()
+            cmd = w.getch()
+            if cmd == curses.KEY_ENTER or cmd == 10: # Enter
+                break
+            elif cmd == curses.KEY_BACKSPACE: # Backspace
+                l = len(assembledstring)
+                assembledstring = assembledstring[:l-1]
+            else:
+                # Here we convert the int provided by
+                # getch() and add it assembledstring.
+                # Enter is not properly parsed.
+                if len(ascii.unctrl(cmd)) > 1:
+                    continue # Other invalid key detected
+                assembledstring += ascii.unctrl(cmd)
+
+        w.addstr("\n")
+        if assembledstring == "quit":
+            w.addstr("Aborting...")
+            leave()
+
+        w.addstr
             
     except KeyboardInterrupt:
         w.addstr("\nAborting...\n")
@@ -38,26 +72,38 @@ def calOpenPrompt():
 
 def main():
     try:
-        w.clear()
-        # Calendar view mechanism
-        if cal == "":
-            w.addstr("\n- - - - - - - -")
-            w.addstr("\nNo calendar file open")
-            w.addstr("\nPress \"o\" and specify")
-            w.addstr("\nWhich file to open")
-            w.addstr("\n- - - - - - - -\n")
-        w.addstr("Type ? for help\n")    
-        w.refresh()
+        clear = True
         while 1:
+            if clear == True and debug == False:
+                w.clear()
+            if cal == "":
+                w.addstr("\n- - - - - - - -")
+                w.addstr("\nNo calendar file open")
+                w.addstr("\nPress \"o\" and specify")
+                w.addstr("\nWhich file to open")
+                w.addstr("\n- - - - - - - -\n")
+            w.addstr("Type ? for help\n")    
+            w.refresh()
             w.addstr("> ")
             cmd = w.getch()
-            if debug == True:
-                w.addstr(str("\n" + str(cmd)))
+            # Clear "clear" var if it is set
+            if clear == False:
+                clear = True
             w.addstr("\n");
-            if cmd == 113:
+            truecmd = ascii.unctrl(cmd).lower()
+            if truecmd == 'q':
                 leave()
-            if cmd == 111:
+            elif truecmd == 'o':
                 calOpenPrompt()
+            elif truecmd == '?':
+                helpPrompt()
+            else:
+                if debug == True:
+                    w.addstr("\npure: " + str(cmd))
+                    w.addstr("\nunctrl: " + str(truecmd))
+                else:
+                    clear = False
+                    w.addstr(str("Invalid command"))
             w.refresh()            
         
     except KeyboardInterrupt:
@@ -67,6 +113,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+#    curses.wrapper(calOpenPrompt)
     
 else:
     print("Do not import this program")
