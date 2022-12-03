@@ -1,6 +1,6 @@
 # osocomp
 
-Run the following to execute: ``python3 main.py``
+Run the following to execute: python3 main.py
 
 ## Calendar format
 
