@@ -7,6 +7,9 @@ import curses.ascii as ascii
 w = curses.initscr()
 w.keypad(True)
 
+helpArray=["osocomp -- Abdul's tredje OSO produkt\n","\n\tHvad er dette?","\nDet her er abdul\'s tredje OSO produkt. Det er en kalendar program som","\ntjekker ens kalendar og beregner vejret når man skal udenfor, så hvis","\nman skal til en fest så beregner den vejret for når man tager til feste","\nog indtil man gårer hjem. Den siger så om hvis man skal tage jakke på","\neller andre tøje på.","\n","\n\tHvorfor er denne program tekst-baseret?","\nDet er umuligt at lave en kalendar program med alt disse funktioner på","\net uge når man arbejder med grafisk programmer. Også det er vigtigt","\nat denne program burde virke på alle systemer, forskellige systemer","\nhar forskellige \"grafisk værktøjsset\" (De programmer som gører det","\nmuligt for programmer til at lave grafiske vinduer), Windows har deres","\negen som kaldes for \"WinUI\", MacOS har \"UIKit\", HaikuOS har","\n\"Interface Kit\", og Linux har \"xlib\" men de fleste bruger \"GTK\"","\neller \"Qt\". Det er ikke umuligt at lave en grafiske program som","\nvirker på alle disse systemer men det er virkelig svært og det tager","\nmere end en uge.","\n","\n\tHvem har skrevet denne program?","\nDet har Abdul Karim Kikar, jeg begyndte at skrive denne program I","\nDecember 2022, Lidt tidligere før OSO ugen fordi jeg vidste at det vil","\nvære lidt svær at lave 3 produkter på kun et uge og gører alt de andre","\nting (Fremlæggelse, interview etc.) Også denne program er licenseret","\nunder GNU GPL version 3 eller nyere versioner. Du kan få kildekoden","\nved at spørge Abdul selv."]
+
+
 debug=True
 
 def leave():
@@ -18,15 +21,61 @@ def leave():
 
 cal = ""
 
-row = 0
-col = 0
+row = 5
+col = 5
+
+def continueArray(arr):
+    for i,x in enumerate(arr):
+        try:
+            w.addstr(x)
+        except curses.error:
+            return i
 
 def helpPrompt():
     w.clear()
     w.refresh()
-    w.addstr("osocomp -- Abdul's tredje OSO produkt\n\n\tHvad er dette?\nDet her er abdul\'s tredje OSO produkt. Det er en kalendar program som\ntjekker ens kalendar og beregner vejret når man skal udenfor, så hvis\nman skal til en fest så beregner den vejret for når man tager til feste\nog indtil man gårer hjem. Den siger så om hvis man skal tage jakke på\neller andre tøje på.\n\n\tHvorfor er denne program tekst-baseret?\nDet er umuligt at lave en kalendar program med alt disse funktioner på\net uge når man arbejder med grafisk programmer. Også det er vigtigt\nat denne program burde virke på alle systemer, forskellige systemer\nhar forskellige \"grafisk værktøjsset\" (De programmer som gører det\nmuligt for programmer til at lave grafiske vinduer), Windows har deres\negen som kaldes for \"WinUI\", MacOS har \"UIKit\", HaikuOS har\n\"Interface Kit\", og Linux har \"xlib\" men de fleste bruger \"GTK\"\neller \"Qt\". Det er ikke umuligt at lave en grafiske program som\nvirker på alle disse systemer men det er virkelig svært og det tager\nmere end en uge.\n\n\tHvem har skrevet denne program?\nDet har Abdul Karim Kikar, jeg begyndte at skrive denne program I\nDecember 2022, Lidt tidligere før OSO ugen fordi jeg vidste at det vil\nvære lidt svær at lave 3 produkter på kun et uge og gører alt de andre\nting (Fremlæggelse, interview etc.) Også denne program er licenseret\nunder GNU GPL version 3 eller nyere versioner. Du kan få kildekoden\nved at spørge Abdul selv.\n\n")
-    w.getch()
-    main()
+    y = 0
+    erri = 0
+    for i,prompt in enumerate(helpArray):
+        try:
+            w.addstr(prompt)
+        except curses.error:
+            erri = i
+# 25
+    while True:                
+        cmd = w.getch()
+        if cmd == curses.KEY_DOWN or cmd == 258: # Down arrow key
+            w.clear()
+            if erri - 1 < 0:
+                y = erri
+            else:
+                y = len(helpArray) - erri + 1
+            for num in range(y,len(helpArray)):
+                text = helpArray[num]
+                if num == y:
+                    text = text[1:]
+                w.addstr(text)
+            w.addstr("\n: ")
+        if cmd == curses.KEY_UP or cmd == 259: # Up arrow key
+            if y == 0:
+                pass
+            else:
+                w.clear()
+                if y - 1 > len(helpArray):
+                    pass
+                else:
+                    y = y - 1
+                    for num in range(y,len(helpArray)):
+                        text = helpArray[num]
+                        if num == y:
+                            text = text[1:]
+                        try:
+                            w.addstr(text)
+                        except curses.error:
+                            pass
+        if cmd == curses.KEY_ENTER or cmd == 10:
+            w.clear()
+            main()
 
 
 def calOpenPrompt():
@@ -46,7 +95,7 @@ def calOpenPrompt():
             cmd = w.getch()
             if cmd == curses.KEY_ENTER or cmd == 10: # Enter
                 break
-            elif cmd == curses.KEY_BACKSPACE: # Backspace
+            elif cmd == curses.KEY_BACKSPACE or cmd == 127: # Backspace
                 l = len(assembledstring)
                 assembledstring = assembledstring[:l-1]
             else:
@@ -61,8 +110,6 @@ def calOpenPrompt():
         if assembledstring == "quit":
             w.addstr("Aborting...")
             leave()
-
-        w.addstr
             
     except KeyboardInterrupt:
         w.addstr("\nAborting...\n")
@@ -118,3 +165,4 @@ if __name__ == "__main__":
 else:
     print("Do not import this program")
     sys.exit(1)
+
