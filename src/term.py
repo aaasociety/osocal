@@ -1,18 +1,27 @@
 #!/bin/python3
+# term.py handles some terminal handling
+# It mostly wraps around the curses module.
+# This helps keep the codebase for the main
+# app clean.
+
 import sys,curses
-import curses.ascii as ascii
-import src.lib as lib
+import curses.ascii as ascii # For decoding things returned by curses
+import src.lib as lib # Shared values across the app.
+
+# An Internal function
+# for checking if a
+# prompt suits print()
+# Mostly for future-proofing.
+def isPrintable(prompt):
+    # Check if the prompt given is valid for term.print()
+    if prompt is None or not isinstance(prompt,list) or not isinstance(prompt,str):
+        return False
+    else:
+        return True
 
 w = lib.w
 row = lib.row
 ERR = lib.ErrType
-# Print function with the
-# ability to print entire
-# arrays.
-#
-# The brute function tells the function to
-# try and forcefully print, discarding any other
-# text or messages.
 def leave():
     curses.echo()
     w.keypad(False)
@@ -20,7 +29,13 @@ def leave():
     curses.endwin()
     sys.exit(1)
 
-
+# Print function with the
+# ability to print entire
+# arrays.
+#
+# The brute function tells the function to
+# try and forcefully print, discarding any other
+# text or messages.
 def print(prompt,brute = False):
     if prompt is None:
         return ERR
@@ -149,11 +164,11 @@ def scrollablePrompt(promptarray):
         
 def editablePrompt(prompt, userprompt = "\n> ", backspace = True):
     # Check if the prompt given is valid for term.print()
-    if prompt is None or not isinstance(prompt,list) or not isinstance(prompt,str):
-        return -1
+    if isPrintable(prompt) == False:
+        return ERR
 
-    if prompt is None or not isinstance(userprompt,list) or not isinstance(userprompt,str):
-        return -1
+    if isPrintable(userprompt) == False:
+        return ERR
     
     curses.cbreak() # We will handle special keys ourselves.
     w.keypad(True) # We want to handle pure curses keycodes.
@@ -187,6 +202,24 @@ def editablePrompt(prompt, userprompt = "\n> ", backspace = True):
                                                  # So add it into the string.
 
     return assembledstring # Return the string.
+
+# A Yes or no prompt
+def ynPrompt(prompt,inputprompt = "[Y/n]:"):
+    # Check if the prompt given is valid for term.print()
+    if isPrintable(prompt) == False:
+        return ERR
+
+    if isPrintable(inputprompt):
+        return ERR
+
+    term.print(prompt) # Print the prompt
+    term.print(inputprompt) # Print the little input prompt
+    char = w.getch()
+    
+    if ascii.unctrl(char).lower() == "y":
+        return True
+    else:
+        return False
 
 if __name__ == "__main__":
     sys.exit(1) # This program is not intended to be run directly.

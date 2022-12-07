@@ -18,6 +18,7 @@ debug=lib.debug
 cal = lib.cal
 row = lib.row
 col = lib.col
+ERR = lib.ErrType
 
 def infoPrompt():
     try:
@@ -33,11 +34,14 @@ def infoPrompt():
 def calOpenPrompt():
     try:
         result = term.editablePrompt(dialog.cal.open)
-        
-        w.addstr("\n")
+
         if result == "quit":
             w.addstr("Aborting...")
             term.leave()
+
+        
+        if term.ynPrompt("Is this correct: " + assembledstring) == False:
+            leave()
 
         w.getch()
     except KeyboardInterrupt:
