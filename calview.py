@@ -27,12 +27,18 @@ def calview(w):
             month = date.getStartingDate().split("-")[0]
             year = date.getStartingDate().split("-")[1]
             CellList = term.renderCalendar(month,year) # Render the actual calendar.
+            def setCursor():
+                curses.setsyx(cal.extractRow(CellList,item),cal.extractRow(CellList,item))
 
             # Get the Col and Row values from CellList
             col = 0
             row = int(CellList[len(CellList) - 1].split("-")[1]) + 1
-            
-            w.getch()
+            item = 0
+            while True:
+                curses.curs_set(2)
+                setCursor()
+                cmd = w.getch()
+                
             
     except KeyboardInterrupt:
         w.clear()
@@ -107,8 +113,8 @@ def main():
         sys.exit(1)
 
 if __name__ == "__main__":
-    #main()
-    curses.wrapper(calview)
+    main()
+#    curses.wrapper(calview)
     
 else:
     print("Do not import this program")
