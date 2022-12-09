@@ -2,13 +2,14 @@
 # © abdul karim kikar 2022
 # licenseret under GNU GPL version 3 og nyere versioner.
 
+# This creates the "w" window object.
+import src.lib as lib
+
 import src.term as term
 import sys,curses
 import curses.ascii as ascii
 import src.dialog as dialog
-
-# This creates the "w" window object.
-import src.lib as lib
+import src.date as date
 
 # These are here for backwards-compatability purposes
 # Eventually, I will get around to fixing each individual
@@ -19,6 +20,29 @@ cal = lib.cal
 row = lib.row
 col = lib.col
 ERR = lib.ErrType
+
+# The function that actualls views the calendar and let's the user edit it.
+# [1] [2] [3] [4] [5] [6] [7]
+def calview(w):
+    try:
+        row = 10
+        col = 10
+        month = date.getStartingDate().split("-")[0]
+        year = date.getStartingDate().split("-")[1]
+        while True:
+            temp_row = 0 
+            temp_col = 0
+            w.clear()
+            w.refresh()
+            w.addstr("\t\t\t" + date.getMonth(month) + "\n")
+            for x in range(1,date.getDays(month,year) + 1):
+                w.addstr("[" + str(x) + "]")
+            w.getch()
+            
+    except KeyboardInterrupt:
+        w.clear()
+        w.addstr("Leaving...")
+        term.leave()
 
 def infoPrompt():
     try:
@@ -34,16 +58,15 @@ def infoPrompt():
 def calOpenPrompt():
     try:
         result = term.editablePrompt(dialog.cal.open)
-
+        
         if result == "quit":
             w.addstr("Aborting...")
             term.leave()
 
-        
-        if term.ynPrompt("Is this correct: " + assembledstring) == False:
+        if term.ynPrompt("Is this correct: " + str(result)) == False:
             leave()
 
-        w.getch()
+        calView(result)
     except KeyboardInterrupt:
         w.addstr("\nAborting...\n")
         term.leave()
@@ -89,8 +112,8 @@ def main():
         sys.exit(1)
 
 if __name__ == "__main__":
-    main()
-#    curses.wrapper(calOpenPrompt)
+    #main()
+    curses.wrapper(calview)
     
 else:
     print("Do not import this program")
