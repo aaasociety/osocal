@@ -16,3 +16,8 @@ def parse(file):
     if file == "" or file == NULL:
         return -1
 
+def dayHasEvent(day, month):
+    if day % 2 == 0:
+        return True
+    else:
+        return False

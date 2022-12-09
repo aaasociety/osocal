@@ -17,3 +17,7 @@ debug = True
 
 # Shared data values for years, months and days.
 year = 0
+
+
+# Shared limits
+collimit = 15

@@ -7,9 +7,10 @@
 import sys,curses
 import curses.ascii as ascii # For decoding things returned by curses
 import src.lib as lib # Shared values across the app.
+import src.date as date # For date parsing.
+import src.cal as cal # For parsing the calendar.
 
-# For rendering cells...
-import src.date as date
+import os as os # For debugging
 
 
 # An Internal function
@@ -225,5 +226,56 @@ def ynPrompt(prompt,inputprompt = "[Y/n]:"):
     else:
         return False
 
+# A function for rendering the calendar
+def renderCalendar(month,year):
+    w.clear()
+    w.refresh()
+    # This array stores the "col" and "row" value of each cell so it
+    # can be browsed later on in the program.
+    CellList = []
+    row = 1 # Skip one line for displaying the year.
+    col = 0 
+    w.addstr("\t" + date.getMonth(month) + " " + str(year) + "\n")
+    for x in range(1,date.getDays(month,year) + 1):
+        # Make all of the cell numbers look uniform
+        # By adding a "0" to the numbers below 10
+        # so fx. 1 will look like [01]
+        if x < 10:
+            y = str("0" + str(x))
+        else:
+            y = x
+
+        # cal.dayHasEvent() has not been implemented yet
+        # But this allows me to render asterisks and test
+        # it all out
+        if cal.dayHasEvent(x,month):
+            tmp = 6
+            z = "]*"
+        else:
+            tmp = 5
+            z = "]"
+
+        # Print the actual cell and store the value of row and col
+        # on CellList which will be returned back to the process
+        try:
+            w.addstr(row, col, "[" + str(y) + str(z))
+            os.system("echo \"row: " + str(row) + " - col: " + str(col) + " - x: " + str(x) + "\" >> log.txt")
+            CellList.append(str(col) + "-" + str(row))
+        except curses.error:
+            row += 1
+            col = 0
+
+        # Add the neccessary amount of characters to skip over.
+        col += tmp
+
+        # If col has reached its limit then we move on to the next line
+        if col > lib.collimit * 2:
+            row += 1
+            col = 0
+            
+    # We are all done
+    # Return CellList
+    return CellList
+    
 if __name__ == "__main__":
     sys.exit(1) # This program is not intended to be run directly.

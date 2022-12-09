@@ -5,38 +5,33 @@
 # This creates the "w" window object.
 import src.lib as lib
 
-import src.term as term
-import sys,curses
-import curses.ascii as ascii
-import src.dialog as dialog
-import src.date as date
+import sys,curses # For terminal handling
+import src.term as term # For even better terminal handling
+import curses.ascii as ascii # For decoding keys provided by getch()
+import src.dialog as dialog # For dialogue
+import src.date as date # For parsing dates and whatnot
+import src.cal as cal # For parsing the calendar
 
 # These are here for backwards-compatability purposes
 # Eventually, I will get around to fixing each individual
 # variable to use the one from lib.py
 w = lib.w
 debug=lib.debug
-cal = lib.cal
+calFile = lib.cal
 row = lib.row
 col = lib.col
 ERR = lib.ErrType
 
-# The function that actualls views the calendar and let's the user edit it.
-# [1] [2] [3] [4] [5] [6] [7]
 def calview(w):
     try:
-        row = 10
-        col = 10
-        month = date.getStartingDate().split("-")[0]
-        year = date.getStartingDate().split("-")[1]
-        while True:
-            temp_row = 0 
-            temp_col = 0
-            w.clear()
-            w.refresh()
-            w.addstr("\t\t\t" + date.getMonth(month) + "\n")
-            for x in range(1,date.getDays(month,year) + 1):
-                w.addstr("[" + str(x) + "]")
+            month = date.getStartingDate().split("-")[0]
+            year = date.getStartingDate().split("-")[1]
+            CellList = term.renderCalendar(month,year) # Render the actual calendar.
+
+            # Get the Col and Row values from CellList
+            col = 0
+            row = int(CellList[len(CellList) - 1].split("-")[1]) + 1
+            
             w.getch()
             
     except KeyboardInterrupt:
@@ -80,7 +75,7 @@ def main():
             if clear == True and debug == False:
                 w.clear()
             term.print(dialog.main.intro)
-            if cal == "":
+            if calFile == "":
                 term.print(dialog.main.calmissing)
             term.print(dialog.main.basichelp)
             w.refresh()
