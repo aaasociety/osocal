@@ -1,1 +1,8 @@
-2022-12-10
+{
+	1,
+	"OSO fremlæggelse",
+	"NBA10, Odense, Denmark.",
+	"2022-12-19-11-00",
+	"2022-12-19-15-00",
+	"HUSK AT VÆRE KLAR!",
+}

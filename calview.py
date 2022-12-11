@@ -3,57 +3,51 @@
 # licenseret under GNU GPL version 3 og nyere versioner.
 
 # This creates the "w" window object.
-import src.lib as lib
+#import src.lib as lib
 
-import sys,curses # For terminal handling
-import src.term as term # For even better terminal handling
-import curses.ascii as ascii # For decoding keys provided by getch()
-import src.dialog as dialog # For dialogue
-import src.date as date # For parsing dates and whatnot
+#import sys,curses # For terminal handling
+#import src.term as term # For even better terminal handling
+#import curses.ascii as ascii # For decoding keys provided by getch()
+#import src.dialog as dialog # For dialogue
+#import src.date as date # For parsing dates and whatnot
 import src.cal as cal # For parsing the calendar
 
 # These are here for backwards-compatability purposes
 # Eventually, I will get around to fixing each individual
 # variable to use the one from lib.py
-w = lib.w
-debug=lib.debug
-calFile = lib.cal
-row = lib.row
-col = lib.col
-ERR = lib.ErrType
+#w = lib.w
+#debug=lib.debug
+#calFile = lib.cal
+#row = lib.row
+#col = lib.col
+#ERR = lib.ErrType
 
-def calview(w):
+def calview(calFile):
+    print(cal.parse(calFile))
+
+def calview2(calFile):
     try:
-            month = date.getStartingDate().split("-")[0]
-            year = date.getStartingDate().split("-")[1]
-            CellList = term.renderCalendar(month,year) # Render the actual calendar.
-            def setCursor():
-                curses.setsyx(cal.extractRow(CellList,item),cal.extractRow(CellList,item))
+        # Open the calendar and store the list of events
+        eventList = cal.open(calFile)
 
-            # Get the Col and Row values from CellList
-            col = 0
-            row = int(CellList[len(CellList) - 1].split("-")[1]) + 1
-            item = 0
-            while True:
-                curses.curs_set(2)
-                setCursor()
-                cmd = w.getch()
+        month = date.getStartingDate().split("-")[0] # Get Month
+        year = date.getStartingDate().split("-")[1] # Get year
+        CellList = term.renderCalendar(month,year)# Render the actual calendar.
+        def setCursor():
+            curses.setsyx(cal.extractRow(CellList,item),cal.extractCol(CellList,item))
+        # Get the Col and Row values from CellList
+        col = 0
+        row = int(CellList[len(CellList) - 1].split("-")[1]) + 1
+        item = 0
+        while True:
+            curses.curs_set(2)
+            setCursor()
+            cmd = w.getch()
                 
             
     except KeyboardInterrupt:
         w.clear()
         w.addstr("Leaving...")
-        term.leave()
-
-def infoPrompt():
-    try:
-        result = term.scrollablePrompt(dialog.info)
-        if result == 1: # Check if everything went fine
-            main()      # This also means that the user
-                        # pressed the Enter key.
-    except KeyboardInterrupt:
-        w.clear()
-        w.addstr("Aborting...")
         term.leave()
 
 def calOpenPrompt():
@@ -67,7 +61,7 @@ def calOpenPrompt():
         if term.ynPrompt("Is this correct: " + str(result)) == False:
             leave()
 
-        calView(result)
+        calview(result)
     except KeyboardInterrupt:
         w.addstr("\nAborting...\n")
         term.leave()
@@ -90,14 +84,24 @@ def main():
             # Clear "clear" var if it is set
             if clear == False:
                 clear = True
-            w.addstr("\n");
+
+            # Parse commands
+            # q is for quitting
+            # o is for opening a calendar
+            # i is for information about the program and its features
+            # c is for copyright information
+            # h is for a basic help dialog.
             truecmd = ascii.unctrl(cmd).lower()
             if truecmd == 'q':
                 term.leave()
             elif truecmd == 'o':
                 calOpenPrompt()
             elif truecmd == 'i':
-                infoPrompt()
+                term.scrollablePrompt(dialog.info)
+            elif truecmd == 'c':
+                term.scrollablePrompt(dialog.copyright)
+            elif truecmd == 'h':
+                term.scrollablePrompt(dialog.main.basichelp)
             else:
                 if debug == True:
                     w.addstr("\npure: " + str(cmd))
@@ -113,7 +117,8 @@ def main():
         sys.exit(1)
 
 if __name__ == "__main__":
-    main()
+    calview("cal.txt")
+   # main()
 #    curses.wrapper(calview)
     
 else:

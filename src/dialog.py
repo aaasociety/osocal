@@ -20,12 +20,12 @@ setattr(main, "intro", [
 ])
 
 setattr(main, "calmissing", [
-        "\n- - - - - - - -",
-        "\nDu har ikke åbnet en",
-        "\nkalendar fil endnu.",
-        "\ntast \"o\" til at åbne",
-        "\nmenuen",
-        "\n- - - - - - - -"
+    "\n- - - - - - - -",
+    "\nDu har ikke åbnet en",
+    "\nkalendar fil endnu.",
+    "\ntast \"o\" til at åbne",
+    "\nmenuen",
+    "\n- - - - - - - -"
 ])
 
 setattr(main, "basichelp", [
@@ -41,6 +41,11 @@ setattr(cal, "open", [
     "\nDu vil gerne åben ellers så kan du ",
     "\nSkriv \"quit\" for at lukke programmet."
 ])
+
+copyright = [
+    "\nCopyright © Abdul Karim Kikar 2022.",
+    "\nLicensed under the GNU General Public License Version 3 or later."
+]
 
 info = [
     "osocomp -- Abdul's tredje OSO produkt",
