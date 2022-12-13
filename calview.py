@@ -3,24 +3,25 @@
 # licenseret under GNU GPL version 3 og nyere versioner.
 
 # This creates the "w" window object.
-#import src.lib as lib
+import src.win as win
 
-#import sys,curses # For terminal handling
-#import src.term as term # For even better terminal handling
-#import curses.ascii as ascii # For decoding keys provided by getch()
-#import src.dialog as dialog # For dialogue
-#import src.date as date # For parsing dates and whatnot
+import sys,curses # For terminal handling
+import src.lib as lib # Shared values and data.
+import src.term as term # For even better terminal handling
+import curses.ascii as ascii # For decoding keys provided by getch()
+import src.dialog as dialog # For dialogue
+import src.date as date # For parsing dates and whatnot
 import src.cal as cal # For parsing the calendar
 
 # These are here for backwards-compatability purposes
 # Eventually, I will get around to fixing each individual
 # variable to use the one from lib.py
-#w = lib.w
-#debug=lib.debug
-#calFile = lib.cal
-#row = lib.row
-#col = lib.col
-#ERR = lib.ErrType
+w = win.w
+debug=lib.debug
+calFile = lib.cal
+row = lib.row
+col = lib.col
+ERR = lib.ErrType
 
 def calview(calFile):
     print(cal.parse(calFile))
