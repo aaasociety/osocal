@@ -77,5 +77,20 @@ def getStartingDate():
     year = curtime.year
     return str(month) + "-" + str(year)
 
+def prettifyDate(date):
+    finaldate = ""
+    year = date.split("-")[0]
+    month = date.split("-")[1]
+    day = date.split("-")[2]
+    hour = date.split("-")[3]
+    mins = date.split("-")[4]
+
+    # So we need to format something like
+    # 2022-12-19-15-00
+    # to
+    # December 19, 2022. 15:00
+    finaldate += getMonth(month) + " " + day + ", " + year + ". " + hour + ":" + mins
+    return finaldate
+
 if __name__ == "__main__":
     sys.exit(1) # Not intended to be ran directly.

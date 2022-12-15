@@ -162,16 +162,16 @@ def dayHasEvent(day, month, year = lib.year, events = lib.events):
         eventmonth = str(events[x][3]).split("-")[1] # 2022-*12*19-15-00 
         eventday  =  str(events[x][3]).split("-")[2] # 2022-12-*19*15-00
         
-        if lib.debug == True:
+        if lib.debug > 3:
             os.system(str("echo \"\n--\neventday:" + str(eventday) + "\nday: " + str(day) + "\neventmonth: " + str(eventmonth) + "\nmonth: " + str(month) + "\neventyear: " + str(eventyear) + "\nyear: " + str(year) + "\" >> logit.txt"))
         # Now we compare it to the day and month provided by the process
         # calling. Yes this is slow but it's the only approach I can think off.
         if str(year) == eventyear and str(month) == eventmonth and str(day) == eventday:
-            if lib.debug == True:
+            if lib.debug > 3:
                 os.system("echo \"Result: true\" >> logit.txt")
             return True
         else:
-            if lib.debug == True:
+            if lib.debug > 3:
                 os.system("echo \"Result: false\" >> logit.txt")
         
     # Nothing returned true, return false.
@@ -180,7 +180,7 @@ def dayHasEvent(day, month, year = lib.year, events = lib.events):
 
 # A function to get the name of an event
 # from its event id.
-def getName(id,events):
+def getName(id,events = lib.events):
     # Return the int of id just in case
     id = int(id)
 
@@ -197,7 +197,7 @@ def getName(id,events):
 
 # A function get the location of an event
 # from its id
-def getLocation(id,events):
+def getLocation(id,events = lib.events):
     # Return the int of id just in case
     id = int(id)
 
@@ -214,7 +214,7 @@ def getLocation(id,events):
 
 # A function to get the starting date of an event
 # from its id
-def getStartDate(id,events):
+def getStartDate(id,events = lib.events):
     # Return the int of id just in case
     id = int(id)
 
@@ -231,7 +231,7 @@ def getStartDate(id,events):
 
 # A function to get the ending date of an event
 # from its id
-def getEndDate(id,events):
+def getEndDate(id,events = lib.events):
     # Return the int of id just in case
     id = int(id)
 
@@ -248,7 +248,7 @@ def getEndDate(id,events):
 
 # A function to get notes and other info from an event
 # using its id.
-def getNotes(id,events):
+def getNotes(id,events = lib.events):
     # Return the int of id just in case
     id = int(id)
 
@@ -262,6 +262,19 @@ def getNotes(id,events):
 
     # Return the notes
     return events[id][5]
+
+# Get Event id from day, month and year.
+def getId(day,month,year = lib.year,events = lib.events):
+    for i,x in enumerate(events):
+        eventyear = str(events[x][3]).split("-")[0]  #*2022*-12-19-15-00
+        eventmonth = str(events[x][3]).split("-")[1] # 2022-*12*19-15-00 
+        eventday  =  str(events[x][3]).split("-")[2] # 2022-12-*19*15-00
+    
+        # Now we compare it to the day and month provided by the process
+        # calling. Yes this is slow but it's the only approach I can think off.
+        if str(year) == eventyear and str(month) == eventmonth and str(day) == eventday:
+            return x
+
 
 # A function extract col value from CellList
 def extractCol(CellList,num = 0):

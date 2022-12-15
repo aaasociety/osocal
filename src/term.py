@@ -31,6 +31,7 @@ def leave():
     w.keypad(False)
     curses.nocbreak()
     curses.endwin()
+    curses.curs_set(1)
     sys.exit(1)
 
 # Print function with the

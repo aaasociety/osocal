@@ -23,27 +23,69 @@ row = lib.row
 col = lib.col
 ERR = lib.ErrType
 
-def calview(w):
+def calview(calFile = "cal.txt",month = date.getStartingDate().split("-")[0], year = date.getStartingDate().split("-")[1]):
     try:
         # Open the calendar and store the list of events
-        eventList = cal.parse("cal.txt")
+        events = cal.parse(str(calFile))
         
-        month = date.getStartingDate().split("-")[0] # Get Month
-        year = date.getStartingDate().split("-")[1] # Get year
-        # Set global year to starting year
-        lib.year = year
+        lib.year = year # Set global year to starting year
+        
         CellList = term.renderCalendar(month,year)# Render the actual calendar.
-        lastrow = int(CellList[len(CellList) - 1].split("-")[1]) + 1
-        item = 1
+
+        lastrow = int(CellList[len(CellList) - 1].split("-")[1]) + 1 # This variable stores the row number that we can print to. This is used to print event info and debug info.
+        item = 1 # This variable stores the cell we are currently on.
+        curses.curs_set(2) # Set cursor to very visible mode.
+        
+        wasThereAnEvent = False # A flag to track whether or not an event was displayed, this is used to clear ther terminal at the correct time.
         while True:
-            w.addstr(lastrow,0,str("Item: " + str(item)))
+
+            # Calculate the col and row of the cell we want to
+            # access.
+            colofitem = int(CellList[item - 1].split("-")[0]) + 2
+            rowofitem = int(CellList[item - 1].split("-")[1])
+            if lib.debug > 0:
+                # Add debug information
+                w.addstr(lastrow,0,str("Item: " + str(item)))
+                w.addstr(lastrow + 1,0,str("Colofitem: " + str(colofitem)))
+                w.addstr(lastrow + 2,0,str("Rowofitem: " + str(rowofitem)))
+
+            # Delete any and all lines...
+            for x in range(0,5):
+                w.move(lastrow + x,0)
+                w.clrtoeol()
+                
+            # Ok so here we display the actual event info, if it exists.
+            if cal.dayHasEvent(item,month,year,events):
+                eventid = cal.getId(item,month,year,events)
+                w.addstr(lastrow,0,"Event name: " + str(cal.getName(eventid,events)))
+                w.addstr(lastrow + 1,0,"Location: " + str(cal.getLocation(eventid,events)))
+                w.addstr(lastrow + 2,0,"Starts at: " + date.prettifyDate(str(cal.getStartDate(eventid,events))))
+                w.addstr(lastrow + 3,0,"Ends at: " + date.prettifyDate(str(cal.getEndDate(eventid,events))))
+                w.addstr(lastrow + 4,0,"Notes: " + str(cal.getNotes(eventid,events)))            
+                wasThereAnEvent = True
+            elif wasThereAnEvent == True:
+                wasThereAnEvent = False
+
+            if wasThereAnEvent == False:
+                w.addstr(lastrow,0, "No event here...")
+                w.addstr(lastrow + 1,0, "Maybe check the next page?")
+                w.addstr(lastrow + 2,0, "Days with events are marked with\nan asterisk.")
+                
+            # Move the cursor to the cell that the user has selected
+            w.move(rowofitem,colofitem)
             cmd = w.getch()
             if term.compKey(cmd,curses.KEY_RIGHT,261): # Right arrow key
+                # Increase by one IF we are not on or over 31.
                 if not item >= 31:
                     item += 1
+                else:
+                    item = 31
             elif term.compKey(cmd,curses.KEY_LEFT,260): # Left arrow key
+                # Decrease by one IF we are not on 1 or less than 1
                 if not item <= 1:
                     item -= 1
+                else:
+                    item = 1
             else:
                 pass
             
@@ -74,7 +116,7 @@ def main():
     try:
         clear = True
         while 1:
-            if clear == True and debug == False:
+            if clear == True and debug > 0:
                 w.clear()
             term.print(dialog.main.intro)
             if calFile == "":
@@ -105,7 +147,7 @@ def main():
             elif truecmd == 'h':
                 term.scrollablePrompt(dialog.main.basichelp)
             else:
-                if debug == True:
+                if debug > 0:
                     w.addstr("\npure: " + str(cmd))
                     w.addstr("\nunctrl: " + str(truecmd))
                 else:
@@ -119,9 +161,8 @@ def main():
         sys.exit(1)
 
 if __name__ == "__main__":
-    curses.wrapper(calview)
-#    main()
-#    curses.wrapper(calview2)
+    main()
+
     
 else:
     print("Do not import this program")

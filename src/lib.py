@@ -7,7 +7,8 @@ cal = ""
 ErrType = None
 
 # Global debug mode.
-debug = False
+# 0 for none.
+debug = 0
 
 # Shared data values for years, months and days.
 year = 0
