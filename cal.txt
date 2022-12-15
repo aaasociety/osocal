@@ -6,4 +6,9 @@
 	"2022-12-19-15-00",
 	"HUSK AT VÆRE KLAR!",
 }
-{10,"Ødelæg programmet","Hjem","2022-12-12-09-36","2022-12-12-10-00","",}
+{2,"Aflevering af OSO opgave", "NBA10, Odense, Danmark", "2022-12-16-12-00","2022-12-16-12-00","Husk at aflever synopsis og produkt dokumentation (process)"}
+
+{3,"Ødelæg programmet","Hjem","2022-12-12-09-36","2022-12-12-10-00","",}
+{4,"Jul!","Hjem","2022-12-25-00-00","2022-12-25-24-00","Husk at købe chokolade-kiks og mælk for julemanden."}
+{5,"Nytår","Måske hjem eller hen ved byen","2022-12-31-23-00","2023-01-01-00-00","Jeg glæder mig til nytår, men ikke til de fyrærkeri som bliver tændt I klokken 3 om natten når jeg prøver at sove. Jeg har valgt læsning som mit nyt tema for hele året, hvor jeg prøver at læse så meget som muligt. Helst bøger men telefon og komputer er også tilladt."}
+{6,"Discord call med vennerne","Folketinget","2023-1-1-00-00","2023-1-1-10-00","Jeg har bare lyst til at irretere dem når de prøver at sove :P, også jeg har lyst til at prøve at være vågn for indtil klokken 10."}
