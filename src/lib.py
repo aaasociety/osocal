@@ -12,5 +12,8 @@ debug = True
 # Shared data values for years, months and days.
 year = 0
 
+# Shared events list
+events = {1:[]}
+
 # Shared limits
 collimit = 15

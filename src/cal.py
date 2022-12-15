@@ -4,9 +4,9 @@
 #
 # the purpose of this file is to parse calendars and provide
 # easy, safe and fast functions for manipulating osocomp calendars.
-#import src.lib as lib
-
-ERR = None
+import src.lib as lib
+import os as os
+ERR = lib.ErrType
 calfile = ""
 
 # The "events" dictionary follows this format:
@@ -148,12 +148,34 @@ def parse(file):
             if flags[1] == True:
                 event[flags[4]] += ch
                 continue
-            
+
+    # Set global events list to the now-decoded events list
+    lib.events = events
     # Return the events list
     return events
 
 
-
+# A funcion to check if a specific day has any events
+def dayHasEvent(day, month, year = lib.year, events = lib.events):
+    for i,x in enumerate(events):
+        eventyear = str(events[x][3]).split("-")[0]  #*2022*-12-19-15-00
+        eventmonth = str(events[x][3]).split("-")[1] # 2022-*12*19-15-00 
+        eventday  =  str(events[x][3]).split("-")[2] # 2022-12-*19*15-00
+        
+        if lib.debug == True:
+            os.system(str("echo \"\n--\neventday:" + str(eventday) + "\nday: " + str(day) + "\neventmonth: " + str(eventmonth) + "\nmonth: " + str(month) + "\neventyear: " + str(eventyear) + "\nyear: " + str(year) + "\" >> logit.txt"))
+        # Now we compare it to the day and month provided by the process
+        # calling. Yes this is slow but it's the only approach I can think off.
+        if str(year) == eventyear and str(month) == eventmonth and str(day) == eventday:
+            if lib.debug == True:
+                os.system("echo \"Result: true\" >> logit.txt")
+            return True
+        else:
+            if lib.debug == True:
+                os.system("echo \"Result: false\" >> logit.txt")
+        
+    # Nothing returned true, return false.
+    return False
 
 
 # A function to get the name of an event
@@ -240,16 +262,6 @@ def getNotes(id,events):
 
     # Return the notes
     return events[id][5]
-
-
-    
-# A funcion to check if a specific day has any events
-def dayHasEvent(day, month):
-    if day % 2 == 0:
-        return True
-    else:
-        return False
-
 
 # A function extract col value from CellList
 def extractCol(CellList,num = 0):

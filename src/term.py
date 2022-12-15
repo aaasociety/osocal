@@ -9,8 +9,7 @@ import curses.ascii as ascii # For decoding things returned by curses
 import src.lib as lib # Shared values across the app.
 import src.date as date # For date parsing.
 import src.cal as cal # For parsing the calendar.
-
-import os as os # For debugging
+import src.win as win
 
 
 # An Internal function
@@ -24,7 +23,7 @@ def isPrintable(prompt):
     else:
         return True
 
-w = lib.w
+w = win.w
 row = lib.row
 ERR = lib.ErrType
 def leave():
@@ -248,7 +247,7 @@ def renderCalendar(month,year):
         # cal.dayHasEvent() has not been implemented yet
         # But this allows me to render asterisks and test
         # it all out
-        if cal.dayHasEvent(x,month):
+        if cal.dayHasEvent(x,month,year,lib.events):
             tmp = 6
             z = "]*"
         else:
@@ -259,7 +258,6 @@ def renderCalendar(month,year):
         # on CellList which will be returned back to the process
         try:
             w.addstr(row, col, "[" + str(y) + str(z))
-            os.system("echo \"row: " + str(row) + " - col: " + str(col) + " - x: " + str(x) + "\" >> log.txt")
             CellList.append(str(col) + "-" + str(row))
         except curses.error:
             row += 1
@@ -279,10 +277,6 @@ def renderCalendar(month,year):
     
 if __name__ == "__main__":
     sys.exit(1) # This program is not intended to be run directly.
-
-
-
-
 
 
 # And we all *shut* down...

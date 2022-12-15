@@ -23,28 +23,17 @@ row = lib.row
 col = lib.col
 ERR = lib.ErrType
 
-def calview(calFile):
-    print(cal.parse(calFile))
-
-def calview2(calFile):
+def calview2(w):
     try:
         # Open the calendar and store the list of events
-        eventList = cal.open(calFile)
-
+        eventList = cal.parse("cal.txt")
+        
         month = date.getStartingDate().split("-")[0] # Get Month
         year = date.getStartingDate().split("-")[1] # Get year
+        # Set global year to starting year
+        lib.year = year
         CellList = term.renderCalendar(month,year)# Render the actual calendar.
-        def setCursor():
-            curses.setsyx(cal.extractRow(CellList,item),cal.extractCol(CellList,item))
-        # Get the Col and Row values from CellList
-        col = 0
-        row = int(CellList[len(CellList) - 1].split("-")[1]) + 1
-        item = 0
-        while True:
-            curses.curs_set(2)
-            setCursor()
-            cmd = w.getch()
-                
+        w.getch()
             
     except KeyboardInterrupt:
         w.clear()
@@ -118,9 +107,9 @@ def main():
         sys.exit(1)
 
 if __name__ == "__main__":
-    calview("cal.txt")
+    curses.wrapper(calview2)
    # main()
-#    curses.wrapper(calview)
+#    curses.wrapper(calview2)
     
 else:
     print("Do not import this program")
