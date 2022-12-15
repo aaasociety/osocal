@@ -42,6 +42,8 @@ setattr(cal, "open", [
     "\nSkriv \"quit\" for at lukke programmet."
 ])
 
+basiccalhelp = "Ingen begivenheder\n\nDager som er markerede med et asterisk har en begivenhed.\nDu kan bruge højre og venstre tegnerne til at gå frem og tilbage melle\nforskellige dage.\nDu kan bruge op og ned tegne til at gå frem og tilbage mellem måneder"
+
 copyright = [
     "\nCopyright © Abdul Karim Kikar 2022.",
     "\nLicensed under the GNU General Public License Version 3 or later."

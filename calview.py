@@ -50,7 +50,7 @@ def calview(calFile = "cal.txt",month = date.getStartingDate().split("-")[0], ye
                 w.addstr(lastrow + 2,0,str("Rowofitem: " + str(rowofitem)))
 
             # Delete any and all lines...
-            for x in range(0,5):
+            for x in range(0,10):
                 w.move(lastrow + x,0)
                 w.clrtoeol()
                 
@@ -67,9 +67,7 @@ def calview(calFile = "cal.txt",month = date.getStartingDate().split("-")[0], ye
                 wasThereAnEvent = False
 
             if wasThereAnEvent == False:
-                w.addstr(lastrow,0, "No event here...")
-                w.addstr(lastrow + 1,0, "Maybe check the next page?")
-                w.addstr(lastrow + 2,0, "Days with events are marked with\nan asterisk.")
+                w.addstr(lastrow,0,dialog.basiccalhelp)
                 
             # Move the cursor to the cell that the user has selected
             w.move(rowofitem,colofitem)
