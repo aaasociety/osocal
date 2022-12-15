@@ -23,7 +23,7 @@ row = lib.row
 col = lib.col
 ERR = lib.ErrType
 
-def calview2(w):
+def calview(w):
     try:
         # Open the calendar and store the list of events
         eventList = cal.parse("cal.txt")
@@ -33,7 +33,19 @@ def calview2(w):
         # Set global year to starting year
         lib.year = year
         CellList = term.renderCalendar(month,year)# Render the actual calendar.
-        w.getch()
+        lastrow = int(CellList[len(CellList) - 1].split("-")[1]) + 1
+        item = 0
+        while True:
+            w.addstr(lastrow,0,str("Item: " + str(item)))
+            cmd = w.getch()
+            if term.compKey(cmd,curses.KEY_RIGHT,261): # Right arrow key
+                if not item >= 31:
+                    item += 1
+            elif term.compKey(cmd,curses.KEY_LEFT,260): # Left arrow key
+                if not item <= 0:
+                    item -= 1
+            else:
+                pass
             
     except KeyboardInterrupt:
         w.clear()
@@ -107,8 +119,8 @@ def main():
         sys.exit(1)
 
 if __name__ == "__main__":
-    curses.wrapper(calview2)
-   # main()
+    curses.wrapper(calview)
+#    main()
 #    curses.wrapper(calview2)
     
 else:
