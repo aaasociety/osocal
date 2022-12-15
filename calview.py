@@ -34,7 +34,7 @@ def calview(w):
         lib.year = year
         CellList = term.renderCalendar(month,year)# Render the actual calendar.
         lastrow = int(CellList[len(CellList) - 1].split("-")[1]) + 1
-        item = 0
+        item = 1
         while True:
             w.addstr(lastrow,0,str("Item: " + str(item)))
             cmd = w.getch()
@@ -42,7 +42,7 @@ def calview(w):
                 if not item >= 31:
                     item += 1
             elif term.compKey(cmd,curses.KEY_LEFT,260): # Left arrow key
-                if not item <= 0:
+                if not item <= 1:
                     item -= 1
             else:
                 pass
