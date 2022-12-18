@@ -34,6 +34,7 @@ def leave():
     curses.curs_set(1)
     sys.exit(1)
 
+    
 # Print function with the
 # ability to print entire
 # arrays.
@@ -41,12 +42,15 @@ def leave():
 # The brute function tells the function to
 # try and forcefully print, discarding any other
 # text or messages.
-def print(prompt,brute = False):
+def print(prompt,row = -1 ,col = 0,brute = False):
     if prompt is None:
         return ERR
     if isinstance(prompt,list):
         for i,msg in enumerate(prompt):
             try:
+                if not row == -1:
+                    w.addstr(row,col,prompt)
+                    continue
                 w.addstr(msg)
             except curses.error:
                 if brute == False:
@@ -55,7 +59,11 @@ def print(prompt,brute = False):
                     w.clear()
                     w.addstr(msg)
     else:
+        if not row == -1:
+            w.addstr(row,col,prompt)
+            return len(prompt)
         w.addstr(str(prompt))
+    return len(prompt)
     
 # A more readable function to compare
 # if a getch() output is a key or a num

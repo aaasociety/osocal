@@ -12,6 +12,7 @@ import curses.ascii as ascii # For decoding keys provided by getch()
 import src.dialog as dialog # For dialogue
 import src.date as date # For parsing dates and whatnot
 import src.cal as cal # For parsing the calendar
+import src.weather as wth # For calling the weather API
 
 # These are here for backwards-compatability purposes
 # Eventually, I will get around to fixing each individual
@@ -23,31 +24,83 @@ row = lib.row
 col = lib.col
 ERR = lib.ErrType
 
+# The weather prompt feature
+def weatherPrompt(location = "Odense, Denmark", events = lib.events):   
+    try:
+        weatherresult = wth.getWeatherData(location)
+        w.clear()
+        row = 0
+        col = 0
+        term.print("Vejret for " + location,0,col)
+        term.print("Vejr: " + weatherresult[1],2)
+        term.print("Temperatur: " + weatherresult[0],4)
+        term.print("Men det føler som " + weatherresult[3],5)
+        term.print("Vindhastighed: " + weatherresult[2],6)
+        term.print("Temperaturen er I celsius og vindhastigheden er I kilometer om timen.",7)
+        row = 8
+        w.move(row,col)
+        w.getch()
+        return
+    except KeyboardInterrupt:
+        w.clear()
+        w.addstr("Leaving...")
+        term.leave()
+
+
+# This will be implemented sometime later
+# I have to focus on the weather feature
 def editEntry(day,month,year = lib.year, events = lib.events,calFile = "cal.txt"):
-    w.clear()
-    row = 0
-    col = 0
-    cur = 0
-    if cal.dayHasEvent(day,month,year,events):
-        eventid = cal.getId(day,month,year,events)
-        w.addstr(row,col,"Redigere eksisterende begivenhed")
-        w.addstr(row + 1,0,"Navn: " + str(cal.getName(eventid,events)))
-        w.addstr(row + 2,0,"Sted: " + str(cal.getLocation(eventid,events)))
-        w.addstr(row + 3,0,"Begynder (YYYY-MM-DD-HH-MM): " + str(cal.getStartDate(eventid,events)))
-        w.addstr(row + 4,0,"Slutter (YYYY-MM-DD-HH-MM):" + str(cal.getEndDate(eventid,events)))
-        w.addstr(row + 5,0,"Noter/Andre information: " + str(cal.getNotes(eventid,events)))
-    else:
-        w.addstr(row,col,"Tilsæt nyt begivenhed")
-        w.addstr(row + 1,0,"Navn: ")
-        w.addstr(row + 2,0,"Sted: ")
-        w.addstr(row + 3,0,"Begynder (YYYY-MM-DD-HH-MM): ")
-        w.addstr(row + 4,0,"Slutter (YYYY-MM-DD-HH-MM): ")
-        w.addstr(row + 5,0,"Noter/Andre information: ")
-    while True:
-        cmd = w.getch()
-        # TODO: Implement this
-    calview(calFile,month,year)
+    try:
+        curses.cbreak() # We will handle special keys ourselves.
+        w.keypad(True) # We want to handle pure curses keycodes.
+        curses.noecho() # We will handle echoing characters ourselves.
+
+        w.clear()
+        row = 0
+        col = 0
+        if cal.dayHasEvent(day,month,year,events):
+            eventid = cal.getId(day,month,year,events)
+            w.addstr(row,col,"Redigere eksisterende begivenhed")
+            w.addstr(row + 1,0,"Navn: " + str(cal.getName(eventid,events)))
+        else:
+            w.addstr(row,col,"Tilsæt nyt begivenhed")
+            w.addstr(row + 1,0,"Navn: ")
+        event = [0,"","","","",""]
+        editables = ["Navn: ", "Sted: ", "Begynder (YYYY-mm-dd-hh-mm): ","Slutter (YYYY-mm-dd-hh-mm):","Noter: "]
+        cur = 1
+        assembledstring = ""
     
+        while True:
+            curlen = len(editables[cur - 1])
+            w.move(row + cur, col + curlen)
+            w.refresh()
+            cmd = w.getch()
+            if term.compKey(cmd,curses.KEY_ENTER,10):
+                # Detected enter key
+                # So save assembledstring.
+                # And set cur to +1
+                event[cur] = assembledstring
+                cur += 1
+            elif term.compKey(cmd,curses.KEY_BACKSPACE,127):
+                # Remove one character
+                assembledstring = assembledstring[:len(assembledstring)-1]
+            else:
+                # Here we convert the int provided by
+                # getch() and add it assembledstring.
+                # But first we detect if we caught some
+                # strange control key.
+                if len(ascii.unctrl(cmd)) > 1:
+                    continue # Other invalid key detected.
+            
+                assembledstring += ascii.unctrl(cmd) # The key is completely valid so we add it to assembledstring.
+            
+                col = len(assembledstring) # Set col to the length of assembled string
+            return
+    except curses.error:
+        w.clear()
+        w.addstr("Leaving...")
+        term.leave()
+        
 def calview(calFile = "cal.txt",month = int(date.getStartingDate().split("-")[0]), year = int(date.getStartingDate().split("-")[1])):
     try:
         # Make sure month and years are integers
@@ -140,7 +193,12 @@ def calview(calFile = "cal.txt",month = int(date.getStartingDate().split("-")[0]
                     month -= 1
                 calview(calFile,month,year)
             elif term.compKey(cmd,curses.KEY_ENTER,10): # Enter key (Edit)
+                if cal.dayHasEvent(item,month,year,events):
+                    weatherPrompt(cal.getLocation(eventid,events),events)
+                    CellList = term.renderCalendar(str(month),year)# Render the actual calendar.
+            elif ascii.unctrl(cmd) == 'e':
                 editEntry(item,month,year,events,calFile)
+                CellList = term.renderCalendar(str(month),year)# Render the actual calendar.
             else:
                 pass
             
