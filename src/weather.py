@@ -21,10 +21,10 @@ def getWeatherData(location):
     location = str(location)
     if location == "":
         return Err
-#    AssembledApiRequest = "https://api.weatherapi.com/v1/forecast.json?key=" + apiKey +"&q=" + location + "&days=1"
-#    response = requests.get(AssembledApiRequest)
-    response = open("DATA.txt","r")
-    weatherdict = json.loads(response.read())
+    AssembledApiRequest = "https://api.weatherapi.com/v1/forecast.json?key=" + apiKey +"&q=" + location + "&days=1"
+    response = requests.get(AssembledApiRequest)
+#    response = open("DATA.txt","r")
+    weatherdict = json.loads(response.text)
     weatherresult = [
         str(weatherdict["current"]["temp_c"]),
         str(weatherdict["current"]["condition"]["text"]),
