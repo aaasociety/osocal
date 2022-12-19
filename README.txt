@@ -6,6 +6,8 @@ A simple Python app!
 
 This is a calendar app coded in Python, it was used for a school project that is long-gone.
 
+To see the calendar app for yourself, run the calview.py program. Don't be surprised if it does not work.
+
 You can use this as a calendar app, the author uses a customized version as his go-to calendar app
 
 ## Why not rewrite it?
