@@ -27,9 +27,10 @@ def getWeatherData(location):
     if location == "Odense, Danmark":
         location = "Odense, Denmark"
         
-    AssembledApiRequest = "https://api.weatherapi.com/v1/forecast.json?key=" + apiKey +"&q=" + location + "&days=1"
-    response = requests.get(AssembledApiRequest)
-    weatherdict = json.loads(str(response.text))
+#    AssembledApiRequest = "https://api.weatherapi.com/v1/forecast.json?key=" + apiKey +"&q=" + location + "&days=1"
+#    response = requests.get(AssembledApiRequest)
+    response = open("DATA.txt","r")
+    weatherdict = json.loads(str(response.read()))
     weatherresult = [
         str(weatherdict["current"]["temp_c"]),
         str(weatherdict["current"]["condition"]["text"]),

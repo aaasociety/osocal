@@ -36,8 +36,20 @@ def weatherPrompt(location = "Odense, Denmark", events = lib.events):
         term.print("Temperatur: " + weatherresult[0],4)
         term.print("Men det føler som " + weatherresult[3],5)
         term.print("Vindhastighed: " + weatherresult[2],6)
-        term.print("Temperaturen er I celsius og vindhastigheden er I kilometer om timen.",7)
-        row = 8
+        row = 7
+        if float(weatherresult[0]) < 15:
+            row += 1
+            term.print("Det er kold, tag en jakke på!",row)
+        if float(weatherresult[0]) < 10:
+            row += 1
+            term.print("Tage en hue på ellers så kommer du til at fryse",row)
+            row += 1
+            term.print("Det er også en god ide at tage handsker på",row)
+        if float(weatherresult[0]) < 3:
+            row += 1
+            term.print("Husk at tage en halstørklæde på.",row)
+        row += 1
+        term.print("Temperaturen er I celsius og vindhastigheden er I kilometer om timen.",row)
         w.move(row,col)
         w.getch()
         return
