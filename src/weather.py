@@ -4,8 +4,9 @@
 #import src.lib as lib # Shared data across all modules
 import json # For handling data
 import requests # For sending API requests
+import src.lib as lib
 
-Err = None
+Err = lib.ErrType
 
 # No I dont really care about exposing my API key.
 apiKey="f45611b139c042d1af9204440221812"
@@ -21,10 +22,14 @@ def getWeatherData(location):
     location = str(location)
     if location == "":
         return Err
+    if location == "Hjem":
+        location = lib.HomeAddress
+    if location == "Odense, Danmark":
+        location = "Odense, Denmark"
+        
     AssembledApiRequest = "https://api.weatherapi.com/v1/forecast.json?key=" + apiKey +"&q=" + location + "&days=1"
     response = requests.get(AssembledApiRequest)
-#    response = open("DATA.txt","r")
-    weatherdict = json.loads(response.text)
+    weatherdict = json.loads(str(response.text))
     weatherresult = [
         str(weatherdict["current"]["temp_c"]),
         str(weatherdict["current"]["condition"]["text"]),

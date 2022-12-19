@@ -18,3 +18,7 @@ events = {1:[]}
 
 # Shared limits
 collimit = 15
+
+# Shared addresses
+HomeAddress="Odense, Denmark"
+ParliamentAddress="Copenhagen, Denmark"
