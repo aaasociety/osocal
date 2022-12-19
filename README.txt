@@ -1,13 +1,15 @@
-# osocomp
+# osocal!
 
-Abdul's OSO produkter!
+A simple Python app!
 
-The most significant of these products are the calview.py program!
-I think the codebase is quite elegant and I have spent a lot of time refining it and making it as bug-free as can be! 
+## What is this mess?
 
-## Calendar format
+This is a calendar app coded in Python, it was used for a school project that is long-gone.
 
-This program uses an internal calendar format which you can edit using the "caledit.py" program and you can read it using "calview.py"
+You can use this as a calendar app, the author uses a customized version as his go-to calendar app
 
+## Why not rewrite it?
 
+A rewrite would be nice but none of us know any other programming languages other than Python.
 
+Maybe we can take a look at Nim? it has a ncurses module...
